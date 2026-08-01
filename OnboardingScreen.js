@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import apiClient from './apiClient';
 import { AuthContext } from './AppNavigator';
 
@@ -30,40 +31,56 @@ export default function OnboardingScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Let's set you up</Text>
+      <Text style={styles.brand}>BARBELLION</Text>
 
-      <Text style={styles.label}>Current Weight (kg)</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        placeholder="e.g. 70"
-        placeholderTextColor="#888"
-        value={weight}
-        onChangeText={setWeight}
-      />
+      <View style={styles.spacer} />
 
-      <Text style={styles.label}>Height (cm)</Text>
-      <TextInput
-        style={styles.input}
-        keyboardType="numeric"
-        placeholder="e.g. 175"
-        placeholderTextColor="#888"
-        value={height}
-        onChangeText={setHeight}
-      />
+      <Text style={styles.title}>YOUR PHYSICAL PROFILE</Text>
+
+      <Text style={styles.label}>CURRENT WEIGHT (KG)</Text>
+      <View style={styles.inputRow}>
+        <Ionicons name="scale-outline" size={18} color="#888" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          placeholder="70"
+          placeholderTextColor="#666"
+          value={weight}
+          onChangeText={setWeight}
+        />
+      </View>
+
+      <Text style={styles.label}>CURRENT HEIGHT (CM)</Text>
+      <View style={styles.inputRow}>
+        <Ionicons name="resize-outline" size={18} color="#888" style={styles.inputIcon} />
+        <TextInput
+          style={styles.input}
+          keyboardType="numeric"
+          placeholder="175"
+          placeholderTextColor="#666"
+          value={height}
+          onChangeText={setHeight}
+        />
+      </View>
 
       <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} disabled={loading}>
-        <Text style={styles.submitText}>{loading ? '...' : 'Continue'}</Text>
+        <Text style={styles.submitText}>{loading ? '...' : 'CONTINUE TO GOALS'}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
+const LIME = '#c6ff1a';
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a', padding: 24, justifyContent: 'center' },
-  title: { color: '#fff', fontSize: 26, fontWeight: '800', marginBottom: 30 },
-  label: { color: '#aaa', fontSize: 14, marginBottom: 6, marginTop: 12 },
-  input: { backgroundColor: '#1a1a1a', color: '#fff', borderRadius: 10, padding: 14, fontSize: 16 },
-  submitBtn: { backgroundColor: '#e63946', borderRadius: 10, padding: 16, alignItems: 'center', marginTop: 30 },
-  submitText: { color: '#fff', fontWeight: '700', fontSize: 16 },
+  container: { flex: 1, backgroundColor: '#0a0a0a', padding: 24, paddingTop: 60 },
+  brand: { color: '#fff', fontSize: 34, fontWeight: '900', textAlign: 'center', letterSpacing: 1 },
+  spacer: { height: 100 },
+  title: { color: '#fff', fontSize: 20, fontWeight: '800', textAlign: 'center', letterSpacing: 0.5, marginBottom: 30 },
+  label: { color: '#999', fontSize: 12, fontWeight: '700', letterSpacing: 0.5, marginBottom: 8, marginTop: 16 },
+  inputRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#161616', borderRadius: 10, borderWidth: 1, borderColor: '#2a2a2a', paddingHorizontal: 14 },
+  inputIcon: { marginRight: 10 },
+  input: { flex: 1, color: '#fff', paddingVertical: 14, fontSize: 15 },
+  submitBtn: { backgroundColor: LIME, borderRadius: 10, padding: 17, alignItems: 'center', marginTop: 32 },
+  submitText: { color: '#0a0a0a', fontWeight: '900', fontSize: 14, letterSpacing: 0.5 },
 });
