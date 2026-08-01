@@ -1,5 +1,5 @@
 const RAW_SETS = [
-  { label: 'Pull-Ups', reps: 'Until failure', instructions: 'Go until failure. If you need to rest, hang and rest 10-20s — don\'t drop off the bar.' },
+  { label: 'Pull-Up Challenge', reps: '50 total reps', instructions: 'Do as many reps as possible until you hit 50 total. If you get fatigued, DO NOT drop to the floor — hang on the bar, rest 10-20 seconds, then resume. Stay on the bar the entire time until you reach 50.' },
   { label: 'Push-Ups', reps: 'Until failure', instructions: 'Push-ups to absolute failure. Set 1 of 2.' },
   { label: 'Push-Ups', reps: 'Until failure', instructions: 'Push-ups to absolute failure. Set 2 of 2.' },
   { label: 'Arm Superset', reps: '30 + 30, x3 rounds', instructions: '30 Hammer Curls straight into 30 Skull Crushers, repeated 3 times total. No rest between movements.' },
