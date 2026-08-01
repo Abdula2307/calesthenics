@@ -57,14 +57,14 @@ export default function RestTimer({ seconds = 120, onComplete }) {
       <Text style={styles.timer}>
         {mins}:{secs.toString().padStart(2, '0')}
       </Text>
-      <Text style={styles.hint}>Auto-advancing when timer hits 0</Text>
+      <Text style={styles.hint}>Next set starts automatically</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0a', justifyContent: 'center', alignItems: 'center' },
-  label: { color: '#e63946', fontSize: 16, fontWeight: '800', letterSpacing: 3, marginBottom: 10 },
-  timer: { color: '#fff', fontSize: 64, fontWeight: '900' },
-  hint: { color: '#666', fontSize: 12, marginTop: 20 },
+  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  label: { color: '#c6ff1a', fontSize: 15, fontWeight: '800', letterSpacing: 3, marginBottom: 10 },
+  timer: { color: '#fff', fontSize: 60, fontWeight: '900' },
+  hint: { color: '#666', fontSize: 12, marginTop: 18 },
 });
