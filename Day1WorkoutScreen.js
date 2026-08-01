@@ -60,7 +60,12 @@ export default function Day1WorkoutScreen({ navigation }) {
       <ProgressBar current={slide.setPosition} total={slide.totalSets} />
 
       {slide.type === 'rest' ? (
-        <RestTimer seconds={slide.seconds} onComplete={advance} />
+        <RestTimer
+          seconds={slide.seconds}
+          onComplete={advance}
+          completedSetNumber={slide.setPosition}
+          nextSetNumber={slide.setPosition + 1}
+        />
       ) : (
         <>
           <View style={styles.card}>
