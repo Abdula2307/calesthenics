@@ -39,6 +39,7 @@ router.post('/log', authMiddleware, async (req, res) => {
 
     res.json({
       parsed,
+      reply: parsed.reply,
       caloriesLeft: Math.max(calorieTarget - totals.food, 0),
       waterLeft: Math.max(waterTarget - totals.water, 0),
       calorieTarget,
