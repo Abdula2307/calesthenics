@@ -19,10 +19,9 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// GET /api/day2/state -> current step, folder, training data, warmups, gatekeeper question
 router.get('/state', authMiddleware, async (req, res) => {
   try {
-    const user = await userModel.findById(req.userId);
+    const user = userModel.findById(req.userId);
     const step = user.current_skill_step || 1;
     const stepData = skillTree.getStepData(step);
     const warmups = skillTree.getWarmups(step);
@@ -42,7 +41,6 @@ router.get('/state', authMiddleware, async (req, res) => {
   }
 });
 
-// POST /api/day2/gatekeeper  { passed: true|false }
 router.post('/gatekeeper', authMiddleware, async (req, res) => {
   try {
     const { passed } = req.body;
@@ -50,19 +48,15 @@ router.post('/gatekeeper', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: 'passed (boolean) is required.' });
     }
 
-    const user = await userModel.findById(req.userId);
+    const user = userModel.findById(req.userId);
     const currentStep = user.current_skill_step || 1;
     const newStep = skillTree.advanceStep(currentStep, passed);
 
-    await new Promise((resolve, reject) => {
-      const db = require('./db');
-      db.run(`UPDATE users SET current_skill_step = ? WHERE id = ?`, [newStep, req.userId], function (err) {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
+    const db = require('./db');
+    const stmt = db.prepare(`UPDATE users SET current_skill_step = ? WHERE id = ?`);
+    stmt.run(newStep, req.userId);
 
-    await workoutModel.logSession(req.userId, 'day2', passed ? 'leveled_up' : 'locked_in');
+    workoutModel.logSession(req.userId, 'day2', passed ? 'leveled_up' : 'locked_in');
 
     res.json({
       leveledUp: passed && newStep !== currentStep,
