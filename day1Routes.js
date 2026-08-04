@@ -17,10 +17,9 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// POST /api/day1/complete  -> called when user finishes the full Day 1 flow
 router.post('/complete', authMiddleware, async (req, res) => {
   try {
-    await workoutModel.logSession(req.userId, 'day1', 'completed');
+    workoutModel.logSession(req.userId, 'day1', 'completed');
     res.json({ message: 'Day 1 workout logged.' });
   } catch (err) {
     console.error(err);
@@ -30,7 +29,7 @@ router.post('/complete', authMiddleware, async (req, res) => {
 
 router.get('/history', authMiddleware, async (req, res) => {
   try {
-    const history = await workoutModel.getHistory(req.userId, 'day1');
+    const history = workoutModel.getHistory(req.userId, 'day1');
     res.json({ history });
   } catch (err) {
     console.error(err);
