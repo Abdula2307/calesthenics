@@ -20,7 +20,6 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// POST /api/nutrition/log  { text: "I drank a 500ml water bottle" }
 router.post('/log', authMiddleware, async (req, res) => {
   try {
     const { text } = req.body;
@@ -29,10 +28,10 @@ router.post('/log', authMiddleware, async (req, res) => {
     }
 
     const parsed = await llmClient.parseNutritionText(text);
-    await nutritionModel.addLog(req.userId, parsed.type, parsed.value, text);
+    nutritionModel.addLog(req.userId, parsed.type, parsed.value, text);
 
-    const totals = await nutritionModel.getTodayTotals(req.userId);
-    const user = await userModel.findById(req.userId);
+    const totals = nutritionModel.getTodayTotals(req.userId);
+    const user = userModel.findById(req.userId);
 
     const calorieTarget = calorieCalc.calculateBaselineCalories(user.current_weight, user.height);
     const waterTarget = calorieCalc.calculateWaterTarget(user.current_weight);
@@ -51,12 +50,11 @@ router.post('/log', authMiddleware, async (req, res) => {
   }
 });
 
-// GET /api/nutrition/status
 router.get('/status', authMiddleware, async (req, res) => {
   try {
-    const user = await userModel.findById(req.userId);
-    const totals = await nutritionModel.getTodayTotals(req.userId);
-    const entries = await nutritionModel.getTodayEntries(req.userId);
+    const user = userModel.findById(req.userId);
+    const totals = nutritionModel.getTodayTotals(req.userId);
+    const entries = nutritionModel.getTodayEntries(req.userId);
 
     const calorieTarget = calorieCalc.calculateBaselineCalories(user.current_weight, user.height);
     const waterTarget = calorieCalc.calculateWaterTarget(user.current_weight);
