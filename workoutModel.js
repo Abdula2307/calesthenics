@@ -2,33 +2,20 @@ const db = require('./db');
 
 const workoutModel = {
   logSession: (userId, day, status) => {
-    return new Promise((resolve, reject) => {
-      const sql = `INSERT INTO workout_progress (user_id, day, status) VALUES (?, ?, ?)`;
-      db.run(sql, [userId, day, status], function (err) {
-        if (err) return reject(err);
-        resolve({ id: this.lastID });
-      });
-    });
+    const stmt = db.prepare(`INSERT INTO workout_progress (user_id, day, status) VALUES (?, ?, ?)`);
+    const result = stmt.run(userId, day, status);
+    return { id: Number(result.lastInsertRowid) };
   },
 
   getHistory: (userId, day) => {
-    return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM workout_progress WHERE user_id = ? AND day = ? ORDER BY logged_at DESC LIMIT 20`;
-      db.all(sql, [userId, day], (err, rows) => {
-        if (err) return reject(err);
-        resolve(rows);
-      });
-    });
+    const stmt = db.prepare(`SELECT * FROM workout_progress WHERE user_id = ? AND day = ? ORDER BY logged_at DESC LIMIT 20`);
+    return stmt.all(userId, day);
   },
 
   isCompletedToday: (userId, day) => {
-    return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM workout_progress WHERE user_id = ? AND day = ? AND date(logged_at) = date('now') LIMIT 1`;
-      db.get(sql, [userId, day], (err, row) => {
-        if (err) return reject(err);
-        resolve(!!row);
-      });
-    });
+    const stmt = db.prepare(`SELECT * FROM workout_progress WHERE user_id = ? AND day = ? AND date(logged_at) = date('now') LIMIT 1`);
+    const row = stmt.get(userId, day);
+    return !!row;
   },
 };
 
