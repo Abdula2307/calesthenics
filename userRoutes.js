@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const userModel = require('./userModel');
+const workoutModel = require('./workoutModel');
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-this';
@@ -17,7 +18,6 @@ function authMiddleware(req, res, next) {
   }
 }
 
-// Approximate — one timezone per country. Add more as needed.
 const COUNTRY_TIMEZONES = {
   'Pakistan': 'Asia/Karachi',
   'India': 'Asia/Kolkata',
@@ -51,7 +51,6 @@ function getWeekdayForCountry(country) {
   return new Date().toLocaleString('en-US', { timeZone: tz, weekday: 'long' });
 }
 
-// Mon/Wed/Fri = Day 1, Tue/Thu/Sat = Day 2, Sunday = rest. Adjust here if you want a different split.
 function getWorkoutForWeekday(weekday) {
   const day1Days = ['Monday', 'Wednesday', 'Friday'];
   const day2Days = ['Tuesday', 'Thursday', 'Saturday'];
@@ -66,8 +65,8 @@ router.post('/onboarding', authMiddleware, async (req, res) => {
     if (!current_weight || !height) {
       return res.status(400).json({ message: 'Weight and height are required.' });
     }
-    await userModel.completeOnboarding(req.userId, current_weight, height);
-    const user = await userModel.findById(req.userId);
+    userModel.completeOnboarding(req.userId, current_weight, height);
+    const user = userModel.findById(req.userId);
     res.json({ message: 'Onboarding complete.', user: sanitize(user) });
   } catch (err) {
     console.error(err);
@@ -77,7 +76,7 @@ router.post('/onboarding', authMiddleware, async (req, res) => {
 
 router.get('/me', authMiddleware, async (req, res) => {
   try {
-    const user = await userModel.findById(req.userId);
+    const user = userModel.findById(req.userId);
     if (!user) return res.status(404).json({ message: 'User not found.' });
     res.json({ user: sanitize(user) });
   } catch (err) {
@@ -88,14 +87,13 @@ router.get('/me', authMiddleware, async (req, res) => {
 
 router.get('/today-workout', authMiddleware, async (req, res) => {
   try {
-    const user = await userModel.findById(req.userId);
+    const user = userModel.findById(req.userId);
     const weekday = getWeekdayForCountry(user.country);
     const result = getWorkoutForWeekday(weekday);
 
     let completedToday = false;
     if (result.day !== 'rest') {
-      const workoutModel = require('./workoutModel');
-      completedToday = await workoutModel.isCompletedToday(req.userId, result.day);
+      completedToday = workoutModel.isCompletedToday(req.userId, result.day);
     }
 
     res.json({ weekday, ...result, completedToday });
@@ -107,7 +105,7 @@ router.get('/today-workout', authMiddleware, async (req, res) => {
 
 router.get('/weight-check-status', authMiddleware, async (req, res) => {
   try {
-    const user = await userModel.findById(req.userId);
+    const user = userModel.findById(req.userId);
     if (!user.last_weight_check) return res.json({ due: false });
     const last = new Date(user.last_weight_check);
     const daysSince = (new Date() - last) / (1000 * 60 * 60 * 24);
@@ -122,7 +120,7 @@ router.post('/weight-check', authMiddleware, async (req, res) => {
   try {
     const { weight, height } = req.body;
     if (!weight) return res.status(400).json({ message: 'Weight is required.' });
-    await userModel.updateWeightCheck(req.userId, weight, height);
+    userModel.updateWeightCheck(req.userId, weight, height);
     res.json({ message: 'Weight check updated.' });
   } catch (err) {
     console.error(err);
