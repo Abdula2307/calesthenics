@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "calisthenics-app",
-    "slug": "calisthenics-app",
+    "name": "barbellion",
+    "slug": "barbellion",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
